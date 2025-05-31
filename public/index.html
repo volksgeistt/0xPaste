@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0xPaste - Share Instantly</title>
+     <link rel="stylesheet" href="style.css" type="text/css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'midnight': '#0f0f23',
+                        'dark-blue': '#1a1a2e',
+                        'neon-blue': '#00d4ff',
+                        'neon-purple': '#8b5cf6',
+                        'glass-white': 'rgba(255, 255, 255, 0.1)'
+                    },
+                    fontFamily: {
+                        'mono': ['JetBrains Mono', 'Fira Code', 'Monaco', 'monospace'],
+                        'sans': ['Inter', 'system-ui', 'sans-serif']
+                    },
+                    backdropBlur: {
+                        'xs': '2px',
+                    },
+                    animation: {
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'float': 'float 6s ease-in-out infinite',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'fade-in': 'fadeIn 0.8s ease-out',
+                        'bounce-slow': 'bounce 3s infinite',
+                        'pulse-slow': 'pulse 4s infinite'
+                    },
+                    keyframes: {
+                        glow: {
+                            '0%': { boxShadow: '0 0 20px rgba(0, 212, 255, 0.3)' },
+                            '100%': { boxShadow: '0 0 40px rgba(0, 212, 255, 0.6)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+</head>
+<body class="gradient-bg min-h-screen text-white font-sans overflow-x-hidden relative">
+    <div class="floating-orb"></div>
+    <div class="floating-orb"></div>
+    <div class="floating-orb"></div>
+
+    <header class="relative z-20 pt-8 pb-4">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-center mb-8">
+                <div class="flex items-center space-x-4 group cursor-pointer" onclick="showHome()">
+                    <div class="w-14 h-14 glass-morphism-strong rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 neon-glow">
+                        <i data-lucide="file-text" class="w-7 h-7 text-neon-blue"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-4xl font-bold text-gradient animate-fade-in">0xPaste</h1>
+                        <p class="text-gray-400 text-sm animate-fade-in">Share Instantly</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 relative z-10">
+        <div id="create-section" class="animate-slide-up">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-6">
+                    <input 
+                        type="text" 
+                        id="paste-title" 
+                        placeholder="Title (optional)" 
+                        class="w-full bg-transparent border-0 border-b-2 border-gray-600 focus:border-neon-blue text-xl text-white placeholder-gray-500 pb-3 outline-none transition-all duration-300 bg-gradient-to-r from-transparent to-transparent focus:from-midnight/20 focus:to-dark-blue/20"
+                    />
+                </div>
+
+                <div class="glass-morphism rounded-3xl p-8 mb-8 neon-glow">
+                    <div class="mb-4 flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex space-x-2">
+                                <div class="w-4 h-4 rounded-full bg-red-500 animate-pulse-slow"></div>
+                                <div class="w-4 h-4 rounded-full bg-yellow-500 animate-pulse-slow" style="animation-delay: 0.5s;"></div>
+                                <div class="w-4 h-4 rounded-full bg-green-500 animate-pulse-slow" style="animation-delay: 1s;"></div>
+                            </div>
+                            <span class="text-gray-400 text-sm font-mono">editor</span>
+                        </div>
+                        <div class="text-gray-400 text-sm">
+                            <span id="char-count">0</span> characters
+                        </div>
+                    </div>
+                    
+                    <textarea 
+                        id="paste-content" 
+                        placeholder="Enter your text, code, or anything you want to share..."
+                        class="w-full h-80 bg-transparent text-white font-mono text-sm resize-none outline-none placeholder-gray-500 leading-relaxed"
+                        oninput="updateCharCount()"
+                    ></textarea>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 space-x-0 sm:space-x-6">
+                    <div class="flex items-center space-x-4">
+                        <select id="expiration" class="glass-morphism px-4 py-3 rounded-xl text-white bg-transparent border-0 outline-none cursor-pointer hover:bg-white/10 transition-all duration-300">
+                            <option value="1day" class="bg-midnight text-white">1 Day</option>
+                            <option value="1week" class="bg-midnight text-white">1 Week</option>
+                            <option value="1month" class="bg-midnight text-white">1 Month</option>
+                            <option value="never" class="bg-midnight text-white">Never</option>
+                        </select>
+                        
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="private-paste" class="sr-only">
+                            <div class="w-6 h-6 glass-morphism rounded-lg flex items-center justify-center transition-all duration-300 hover:bg-white/20">
+                                <i data-lucide="lock" class="w-4 h-4 text-gray-400 hidden" id="lock-icon"></i>
+                            </div>
+                            <span class="text-gray-400 text-sm">Private</span>
+                        </label>
+                    </div>
+                    
+                    <button 
+                        onclick="createPaste()" 
+                        class="btn-primary px-8 py-4 rounded-2xl font-semibold text-white flex items-center space-x-3 transition-all duration-300 hover:scale-105 group"
+                    >
+                        <i data-lucide="send" class="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"></i>
+                        <span>Create Paste</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="recent-section" class="mt-16 mb-12">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-2xl font-bold text-center mb-8 text-gradient">Recent Pastes</h2>
+                <div id="recent-pastes" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+            </div>
+        </div>
+
+        <div id="view-section" class="hidden animate-slide-up">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-6">
+                    <button onclick="showHome()" class="glass-morphism px-4 py-2 rounded-xl text-gray-300 hover:text-white transition-all duration-300 flex items-center space-x-2 hover:bg-white/10">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        <span>Back</span>
+                    </button>
+                </div>
+                
+                <div id="paste-header" class="glass-morphism rounded-3xl p-6 mb-6 neon-glow">
+                </div>
+                
+                <div id="paste-display" class="glass-morphism rounded-3xl p-8 neon-glow">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="toast" class="fixed top-6 right-6 z-50 transform translate-x-full transition-transform duration-300">
+        <div class="glass-morphism-strong rounded-2xl p-4 flex items-center space-x-3 purple-glow">
+            <div id="toast-icon" class="w-6 h-6 flex items-center justify-center">
+                <i data-lucide="check" class="w-5 h-5 text-green-400"></i>
+            </div>
+            <div>
+                <p id="toast-message" class="text-white font-medium"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"> </script>
+</body>
+</html>

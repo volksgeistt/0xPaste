@@ -1,0 +1,12 @@
+{
+  "functions": {
+    "api/pastes.js": {
+      "maxDuration": 10
+    }
+  },
+  "rewrites": [
+    { "source": "/api/pastes", "destination": "/api/pastes" },
+    { "source": "/api/pastes/(.*)", "destination": "/api/pastes?url=$1" },
+    { "source": "/(.*)", "destination": "/public/$1" }
+  ]
+}
