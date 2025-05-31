@@ -1,4 +1,4 @@
-# 0xPaste 
+# 0xPaste - Alpha v0.1.0
 **Share Instantly** - A modern, sleek pastebin service with glass morphism design and advanced features
 ---
 
